@@ -1,37 +1,26 @@
 ---
 import Button from '../ui/Button.astro';
 import QuickInstall from '../ui/QuickInstall.astro';
-import Terminal from './Terminal.astro';
 import { hero } from '../../data/hero';
 import { links } from '../../data/site';
 ---
 
 <section aria-labelledby="hero-title" class="blueprint relative border-b border-border">
-  <div class="mx-auto grid w-full max-w-(--container-page) gap-12 px-4 pt-14 pb-20 sm:px-6 md:pt-20 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)] lg:items-center lg:gap-14 lg:px-8 lg:pt-24 lg:pb-28">
-    <div class="min-w-0">
-      <p class="mb-6 inline-flex items-center gap-2 rounded border border-border bg-surface px-2.5 py-1 font-mono text-xs uppercase tracking-wider text-muted">
-        <span aria-hidden="true" class="h-1.5 w-1.5 rounded-full bg-ok"></span>
-        {hero.eyebrow}
-      </p>
-      <h1 id="hero-title" class="text-[2.75rem] leading-[0.98] font-bold uppercase tracking-[-0.01em] sm:text-6xl lg:text-7xl">
-        {hero.headline}
-      </h1>
-      <p class="mt-6 max-w-xl text-lg text-muted sm:text-xl">{hero.subhead}</p>
+  <div class="mx-auto max-w-3xl px-4 pt-14 pb-20 text-center sm:px-6 md:pt-20 lg:px-8 lg:pt-24 lg:pb-28">
+    <h1 id="hero-title" class="text-[2.75rem] leading-[0.98] font-bold uppercase tracking-[-0.01em] sm:text-6xl lg:text-7xl">
+      {hero.headline}
+    </h1>
+    <p class="mx-auto mt-6 max-w-xl text-lg text-muted sm:text-xl">{hero.subhead}</p>
 
-      <div class="mt-9 max-w-xl">
-        <p class="mb-1 text-sm font-medium uppercase tracking-wider text-fg">{hero.installLabel}</p>
-        <QuickInstall id="hero-install" label={hero.installLabel} />
-      </div>
-
-      <div class="mt-7 flex flex-wrap gap-3">
-        <Button href={links.repo} external>{hero.ctaPrimary.label}</Button>
-        <Button href={hero.ctaSecondary.href} variant="secondary">{hero.ctaSecondary.label}</Button>
-      </div>
-      <p class="mt-5 text-sm text-muted">{hero.requirementsNote}</p>
+    <div class="mx-auto mt-9 max-w-xl text-left">
+      <p class="mb-1 text-sm font-medium uppercase tracking-wider text-fg">{hero.installLabel}</p>
+      <QuickInstall id="hero-install" label={hero.installLabel} />
     </div>
 
-    <div class="min-w-0">
-      <Terminal />
+    <div class="mt-7 flex flex-wrap justify-center gap-3">
+      <Button href={links.repo} external>{hero.ctaPrimary.label}</Button>
+      <Button href={hero.ctaSecondary.href} variant="secondary">{hero.ctaSecondary.label}</Button>
     </div>
+    <p class="mt-5 text-sm text-muted">{hero.requirementsNote}</p>
   </div>
 </section>
