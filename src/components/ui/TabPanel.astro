@@ -1,0 +1,21 @@
+---
+interface Props {
+  /** The `id` of the parent <Tabs>. */
+  group: string;
+  id: string;
+  selected?: boolean;
+  class?: string;
+}
+
+const { group, id, selected = false, class: className } = Astro.props;
+---
+
+<div
+  role="tabpanel"
+  id={`${group}-panel-${id}`}
+  aria-labelledby={`${group}-tab-${id}`}
+  hidden={!selected}
+  class={className}
+>
+  <slot />
+</div>

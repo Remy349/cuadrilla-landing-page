@@ -1,0 +1,17 @@
+---
+import { site } from '../../data/site';
+
+interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props;
+---
+
+<span class:list={['inline-flex items-center gap-2.5 text-xl font-bold uppercase tracking-[0.14em]', className]}>
+  <svg aria-hidden="true" width="22" height="22" viewBox="0 0 32 32" class="shrink-0">
+    <rect width="32" height="32" rx="6" fill="var(--color-accent)" />
+    <path d="M22 9h-8.5A4.5 4.5 0 0 0 9 13.5v5a4.5 4.5 0 0 0 4.5 4.5H22" fill="none" stroke="var(--color-bg)" stroke-width="4" />
+  </svg>
+  {site.name}
+</span>

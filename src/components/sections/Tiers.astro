@@ -1,0 +1,73 @@
+---
+import Section from '../ui/Section.astro';
+import SectionHeading from '../ui/SectionHeading.astro';
+import { tierSection, tiers } from '../../data/tiers';
+---
+
+<Section id="tiers" labelledby="tiers-title">
+  <SectionHeading id="tiers-title" eyebrow={tierSection.eyebrow} title={tierSection.title} intro={tierSection.intro} />
+
+  <ol class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4" role="list">
+    {
+      tiers.map((tier, i) => (
+        <li
+          class:list={['tier card card-hover relative flex flex-col overflow-hidden p-6', `tier-w${tier.weight}`]}
+          data-reveal
+          style={`--reveal-delay: ${i * 90}ms`}
+        >
+          {tier.weight === 4 && <div class="hazard absolute inset-x-0 top-0 h-1.5" aria-hidden="true" />}
+          <div class="flex items-center justify-between gap-3">
+            <span class="tier-badge rounded px-2 py-0.5 font-mono text-sm font-semibold">{tier.id}</span>
+            <span class="flex gap-1" aria-hidden="true">
+              {[1, 2, 3, 4].map((n) => (
+                <span class:list={['h-3 w-1.5 rounded-[1px]', n <= tier.weight ? 'bg-accent' : 'bg-border-strong']} />
+              ))}
+            </span>
+          </div>
+          <h3 class="mt-5 text-2xl font-semibold uppercase lg:text-[1.65rem]">
+            <span class="sr-only">{tier.id} · </span>
+            {tier.name}
+          </h3>
+          <p class="mt-2 text-base text-fg/90">{tier.scope}</p>
+          <p class="mt-3 text-base text-muted">{tier.handling}</p>
+          {tier.callout && (
+            <div class="mt-auto pt-5">
+              <p class="border-t border-accent/40 pt-4 text-base font-medium text-accent">{tier.callout}</p>
+            </div>
+          )}
+        </li>
+      ))
+    }
+  </ol>
+
+  <blockquote class="mx-auto mt-14 max-w-3xl border-l-4 border-accent pl-6 md:mt-20" data-reveal>
+    <p class="text-2xl font-medium uppercase leading-tight sm:text-3xl md:text-4xl">“{tierSection.quote}”</p>
+  </blockquote>
+</Section>
+
+<style>
+  .tier-badge {
+    border: 1px solid var(--color-border-strong);
+    color: var(--color-fg);
+  }
+  .tier-w2 .tier-badge {
+    border-color: color-mix(in srgb, var(--color-accent) 50%, transparent);
+    color: var(--color-accent);
+  }
+  .tier-w3 {
+    background: var(--color-surface-2);
+  }
+  .tier-w3 .tier-badge {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+  }
+  .tier-w4 {
+    background: var(--color-surface-2);
+    border-color: color-mix(in srgb, var(--color-accent) 55%, transparent);
+  }
+  .tier-w4 .tier-badge {
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+    color: var(--color-bg);
+  }
+</style>

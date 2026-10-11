@@ -1,0 +1,104 @@
+---
+/**
+ * ARIA tabs (automatic activation). Pair with <TabPanel group={id} id={tab.id}>.
+ * Tabs that declare an `os` are auto-selected from the visitor's OS on load.
+ */
+interface Tab {
+  id: string;
+  label: string;
+  shortLabel?: string;
+  os?: string;
+}
+
+interface Props {
+  id: string;
+  tabs: Tab[];
+  label: string;
+  class?: string;
+}
+
+const { id, tabs, label, class: className } = Astro.props;
+---
+
+<div class:list={['tabs', className]} data-tabs={id}>
+  <div role="tablist" aria-label={label} class="tablist flex max-w-full overflow-x-auto border-b border-border">
+    {
+      tabs.map((tab, i) => (
+        <button
+          type="button"
+          role="tab"
+          id={`${id}-tab-${tab.id}`}
+          aria-controls={`${id}-panel-${tab.id}`}
+          aria-selected={i === 0 ? 'true' : 'false'}
+          tabindex={i === 0 ? 0 : -1}
+          data-os={tab.os}
+          class="tab -mb-px shrink-0 whitespace-nowrap border-b-2 border-transparent px-3 py-2 text-sm font-medium uppercase tracking-wider text-muted transition-colors hover:text-fg aria-selected:border-accent aria-selected:text-fg sm:px-4"
+        >
+          {tab.shortLabel ? (
+            <>
+              <span class="sm:hidden">{tab.shortLabel}</span>
+              <span class="hidden sm:inline">{tab.label}</span>
+            </>
+          ) : (
+            tab.label
+          )}
+        </button>
+      ))
+    }
+  </div>
+  <slot />
+</div>
+
+<style>
+  .tablist {
+    scrollbar-width: none;
+  }
+  .tab:focus-visible {
+    outline-offset: -2px;
+  }
+</style>
+
+<script>
+  function detectOs(): 'windows' | 'unix' {
+    const nav = navigator as Navigator & { userAgentData?: { platform?: string } };
+    const platform = nav.userAgentData?.platform || navigator.platform || navigator.userAgent;
+    return /win/i.test(platform) ? 'windows' : 'unix';
+  }
+
+  const os = detectOs();
+
+  document.querySelectorAll<HTMLElement>('[data-tabs]').forEach((root) => {
+    const tabs = Array.from(root.querySelectorAll<HTMLButtonElement>(':scope > [role="tablist"] > [role="tab"]'));
+
+    const select = (tab: HTMLButtonElement, focus = false) => {
+      for (const t of tabs) {
+        const selected = t === tab;
+        t.setAttribute('aria-selected', String(selected));
+        t.tabIndex = selected ? 0 : -1;
+        const panel = document.getElementById(t.getAttribute('aria-controls') ?? '');
+        if (panel) panel.hidden = !selected;
+      }
+      if (focus) tab.focus();
+    };
+
+    tabs.forEach((tab, i) => {
+      tab.addEventListener('click', () => select(tab));
+      tab.addEventListener('keydown', (e) => {
+        const last = tabs.length - 1;
+        const next: Record<string, number> = {
+          ArrowRight: i === last ? 0 : i + 1,
+          ArrowLeft: i === 0 ? last : i - 1,
+          Home: 0,
+          End: last,
+        };
+        const target = next[e.key];
+        if (target === undefined) return;
+        e.preventDefault();
+        select(tabs[target]!, true);
+      });
+    });
+
+    const match = tabs.find((t) => t.dataset.os === os);
+    if (match) select(match);
+  });
+</script>

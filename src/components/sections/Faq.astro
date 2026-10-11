@@ -1,0 +1,55 @@
+---
+import Section from '../ui/Section.astro';
+import SectionHeading from '../ui/SectionHeading.astro';
+import { faq, faqSection } from '../../data/faq';
+import { inline } from '../../lib/inline';
+---
+
+<Section id="faq" labelledby="faq-title">
+  <div class="grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] lg:gap-16">
+    <SectionHeading id="faq-title" eyebrow={faqSection.eyebrow} title={faqSection.title} />
+    <div class="min-w-0 border-t border-border">
+      {
+        faq.map((item) => (
+          <details class="faq group border-b border-border">
+            <summary class="flex cursor-pointer list-none items-center justify-between gap-6 py-5 text-xl font-medium uppercase transition-colors hover:text-accent">
+              <h3 class="font-medium">{item.question}</h3>
+              <span aria-hidden="true" class="faq-icon relative h-4 w-4 shrink-0 text-accent" />
+            </summary>
+            <p class="max-w-2xl pb-6 text-base text-muted" set:html={inline(item.answer)} />
+          </details>
+        ))
+      }
+    </div>
+  </div>
+</Section>
+
+<style>
+  .faq summary::-webkit-details-marker {
+    display: none;
+  }
+  .faq-icon::before,
+  .faq-icon::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    height: 2px;
+    margin-top: -1px;
+    background: currentColor;
+    transition: transform 160ms ease;
+  }
+  .faq-icon::after {
+    transform: rotate(90deg);
+  }
+  .faq[open] .faq-icon::after {
+    transform: rotate(0deg);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .faq-icon::before,
+    .faq-icon::after {
+      transition: none;
+    }
+  }
+</style>

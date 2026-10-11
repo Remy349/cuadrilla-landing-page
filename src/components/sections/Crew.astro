@@ -1,0 +1,166 @@
+---
+import Section from '../ui/Section.astro';
+import SectionHeading from '../ui/SectionHeading.astro';
+import Card from '../ui/Card.astro';
+import Badge from '../ui/Badge.astro';
+import { agents, crewSection, type Agent } from '../../data/agents';
+
+const lead = agents.find((a) => a.group === 'lead')!;
+const groupOrder: Agent['group'][] = ['discover', 'design', 'build', 'gate', 'ship'];
+const groups = groupOrder.map((g) => ({
+  id: g,
+  label: crewSection.groups[g],
+  agents: agents.filter((a) => a.group === g),
+}));
+
+const badgeTone = { no: 'muted', yes: 'accent', scoped: 'outline' } as const;
+---
+
+<Section id="crew" labelledby="crew-title">
+  <SectionHeading id="crew-title" eyebrow={crewSection.eyebrow} title={crewSection.title} intro={crewSection.intro} />
+
+  <figure class="crew-tree mb-14 md:mb-20" aria-label={crewSection.diagramLabel} data-reveal>
+    <div class="crew-root-wrap">
+      <div class="crew-root rounded-md border border-accent bg-accent-soft px-5 py-3 text-center">
+        <p class="font-mono text-base font-semibold text-accent">{lead.name}</p>
+        <p class="text-xs uppercase tracking-widest text-muted">{crewSection.groups.lead}</p>
+      </div>
+    </div>
+    <ul class="crew-groups" role="list">
+      {
+        groups.map((group) => (
+          <li class:list={['crew-group', `crew-group-${group.id}`]}>
+            <p class="mb-2 text-xs uppercase tracking-widest text-muted">{group.label}</p>
+            <ul class="crew-chips" role="list">
+              {group.agents.map((a) => (
+                <li class="rounded-md border border-border-strong bg-surface px-3 py-2 font-mono text-[0.8125rem] text-fg">{a.name}</li>
+              ))}
+            </ul>
+          </li>
+        ))
+      }
+    </ul>
+  </figure>
+
+  <ul class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3" role="list">
+    {
+      agents.map((agent, i) => (
+        <Card
+          as="li"
+          class:list={['flex flex-col p-5 sm:p-6', { 'border-accent/60 bg-surface-2': agent.group === 'lead' }]}
+          data-reveal
+          style={`--reveal-delay: ${(i % 3) * 70}ms`}
+        >
+          <div class="flex flex-wrap items-center gap-2">
+            <h3 class:list={['font-mono text-base font-semibold tracking-normal', agent.group === 'lead' ? 'text-accent' : 'text-fg']}>
+              {agent.name}
+            </h3>
+            {agent.builtIn && <Badge tone="muted">{crewSection.builtInLabel}</Badge>}
+          </div>
+          <p class="mt-3 mb-5 text-base text-muted">{agent.role}</p>
+          <p class="mt-auto flex items-center gap-2 text-sm uppercase tracking-wider text-muted">
+            {crewSection.writesLabel}
+            <Badge tone={badgeTone[agent.writes.kind]}>{agent.writes.label}</Badge>
+          </p>
+        </Card>
+      ))
+    }
+  </ul>
+</Section>
+
+<style>
+  /* Mobile: vertical trunk with branches. Desktop: root over a horizontal bus. */
+  .crew-root-wrap {
+    display: flex;
+    position: relative;
+    padding-bottom: 1.5rem;
+  }
+  .crew-root-wrap::after {
+    content: '';
+    position: absolute;
+    left: 1.25rem;
+    top: 100%;
+    margin-top: -1.5rem;
+    height: 1.5rem;
+    width: 1px;
+    background: var(--color-accent);
+  }
+  .crew-groups {
+    position: relative;
+    display: grid;
+    gap: 1.25rem;
+    margin-left: 1.25rem;
+    padding-left: 1.5rem;
+    border-left: 1px solid var(--color-accent);
+  }
+  .crew-group {
+    position: relative;
+  }
+  .crew-group::before {
+    content: '';
+    position: absolute;
+    left: -1.5rem;
+    top: 0.75rem;
+    width: 1rem;
+    height: 1px;
+    background: var(--color-accent);
+  }
+  .crew-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  @media (min-width: 64rem) {
+    .crew-root-wrap {
+      justify-content: center;
+      padding-bottom: 2rem;
+    }
+    .crew-root-wrap::after {
+      left: 50%;
+      margin-top: -2rem;
+      height: 2rem;
+    }
+    .crew-groups {
+      grid-template-columns: 1fr 1fr 2fr 1fr 1fr;
+      gap: 1rem;
+      margin-left: 0;
+      padding-left: 0;
+      padding-top: 1.75rem;
+      border-left: 0;
+    }
+    .crew-group {
+      text-align: center;
+    }
+    /* Vertical drop from the bus. */
+    .crew-group::before {
+      left: 50%;
+      top: -1.75rem;
+      width: 1px;
+      height: 1.75rem;
+    }
+    /* Bus segment; extends into the gaps so segments join up. */
+    .crew-group::after {
+      content: '';
+      position: absolute;
+      top: -1.75rem;
+      left: -0.5rem;
+      right: -0.5rem;
+      height: 1px;
+      background: var(--color-accent);
+    }
+    .crew-group:first-child::after {
+      left: 50%;
+    }
+    .crew-group:last-child::after {
+      right: 50%;
+    }
+    .crew-chips {
+      justify-content: center;
+    }
+    .crew-group-build .crew-chips {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+</style>

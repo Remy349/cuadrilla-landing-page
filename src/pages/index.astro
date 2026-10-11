@@ -1,0 +1,41 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/sections/Header.astro';
+import Hero from '../components/sections/Hero.astro';
+import Problem from '../components/sections/Problem.astro';
+import Flow from '../components/sections/Flow.astro';
+import Tiers from '../components/sections/Tiers.astro';
+import Crew from '../components/sections/Crew.astro';
+import Briefs from '../components/sections/Briefs.astro';
+import Safety from '../components/sections/Safety.astro';
+import Commands from '../components/sections/Commands.astro';
+import Install from '../components/sections/Install.astro';
+import Faq from '../components/sections/Faq.astro';
+import Cta from '../components/sections/Cta.astro';
+import Footer from '../components/sections/Footer.astro';
+import { ui } from '../data/site';
+---
+
+<BaseLayout>
+  <a
+    href="#main"
+    class="sr-only z-100 rounded-md bg-accent px-4 py-2 font-medium text-bg focus:not-sr-only focus:fixed focus:top-3 focus:left-3"
+  >
+    {ui.skipLink}
+  </a>
+  <Header />
+  <main id="main" tabindex="-1" class="focus:outline-none">
+    <Hero />
+    <Problem />
+    <Flow />
+    <Tiers />
+    <Crew />
+    <Briefs />
+    <Safety />
+    <Commands />
+    <Install />
+    <Faq />
+    <Cta />
+  </main>
+  <Footer />
+</BaseLayout>

@@ -1,0 +1,56 @@
+---
+import Section from '../ui/Section.astro';
+import SectionHeading from '../ui/SectionHeading.astro';
+import { flow, flowSection } from '../../data/flow';
+---
+
+<div class="hazard" aria-hidden="true"></div>
+<Section id="how-it-works" labelledby="flow-title" class="bg-bg-alt">
+  <SectionHeading id="flow-title" eyebrow={flowSection.eyebrow} title={flowSection.title} intro={flowSection.intro} />
+
+  <ol class="flow relative grid gap-0 lg:grid-cols-7 lg:gap-3" role="list">
+    {
+      flow.map((step, i) => (
+        <li class="flow-step relative grid grid-cols-[2.75rem_minmax(0,1fr)] gap-4 pb-8 last:pb-0 lg:block lg:pb-0" data-reveal style={`--reveal-delay: ${i * 90}ms`}>
+          <span class="flow-num relative z-10 flex h-11 w-11 items-center justify-center rounded-md border border-accent bg-bg font-mono text-base font-semibold text-accent" aria-hidden="true">
+            {String(i + 1).padStart(2, '0')}
+          </span>
+          <div class="lg:mt-5">
+            <h3 class="text-xl font-semibold uppercase lg:text-2xl">
+              <span class="sr-only">{flowSection.stepLabel} {i + 1}: </span>
+              {step.name}
+            </h3>
+            <p class="mt-1.5 text-base text-muted lg:text-[0.9375rem] lg:leading-relaxed">{step.summary}</p>
+          </div>
+        </li>
+      ))
+    }
+  </ol>
+</Section>
+
+<style>
+  /* Vertical connector on mobile, horizontal on desktop. */
+  .flow-step::before {
+    content: '';
+    position: absolute;
+    left: calc(1.375rem - 0.5px);
+    top: 2.75rem;
+    bottom: 0;
+    width: 1px;
+    background: var(--color-accent);
+    opacity: 0.5;
+  }
+  .flow-step:last-child::before {
+    display: none;
+  }
+  @media (min-width: 64rem) {
+    .flow-step::before {
+      left: 2.75rem;
+      right: -0.75rem;
+      top: calc(1.375rem - 0.5px);
+      bottom: auto;
+      width: auto;
+      height: 1px;
+    }
+  }
+</style>

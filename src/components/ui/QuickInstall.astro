@@ -1,0 +1,25 @@
+---
+import Tabs from './Tabs.astro';
+import TabPanel from './TabPanel.astro';
+import CodeBlock from './CodeBlock.astro';
+import { quickTabs } from '../../data/install';
+import { inline } from '../../lib/inline';
+
+interface Props {
+  id: string;
+  label: string;
+}
+
+const { id, label } = Astro.props;
+---
+
+<Tabs id={id} tabs={quickTabs} label={label}>
+  {
+    quickTabs.map((tab, i) => (
+      <TabPanel group={id} id={tab.id} selected={i === 0} class="pt-3">
+        <CodeBlock code={tab.snippets[0]!.code} language={tab.snippets[0]!.lang} label={tab.snippets[0]!.lang} />
+        {tab.warning && <p class="mt-2 text-sm text-muted" set:html={inline(tab.warning)} />}
+      </TabPanel>
+    ))
+  }
+</Tabs>

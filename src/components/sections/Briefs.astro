@@ -1,0 +1,29 @@
+---
+import Section from '../ui/Section.astro';
+import SectionHeading from '../ui/SectionHeading.astro';
+import CodeBlock from '../ui/CodeBlock.astro';
+import { briefExample, briefSection } from '../../data/briefs';
+---
+
+<div class="hazard" aria-hidden="true"></div>
+<Section id="briefs" labelledby="briefs-title" class="bg-bg-alt">
+  <div class="grid gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:items-start lg:gap-16">
+    <div class="min-w-0">
+      <SectionHeading id="briefs-title" eyebrow={briefSection.eyebrow} title={briefSection.title} intro={briefSection.intro} />
+      <ul class="-mt-2 space-y-6" role="list">
+        {
+          briefSection.points.map((point) => (
+            <li class="border-l-2 border-accent pl-5" data-reveal>
+              <h3 class="text-xl font-semibold uppercase">{point.title}</h3>
+              <p class="mt-1.5 text-base text-muted">{point.body}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+    <figure class="min-w-0" data-reveal>
+      <CodeBlock code={briefExample} language="markdown" label={briefSection.cardTitle} copy={false} wrap />
+      <figcaption class="mt-3 font-mono text-xs text-muted">{briefSection.cardCaption}</figcaption>
+    </figure>
+  </div>
+</Section>

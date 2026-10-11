@@ -1,0 +1,127 @@
+---
+import { Code } from 'astro:components';
+import { cuadrillaTheme } from '../../lib/shiki-theme';
+import { ui } from '../../data/site';
+
+interface Props {
+  code: string;
+  language: 'bash' | 'powershell' | 'json' | 'markdown' | 'text';
+  /** Short label shown in the block header, e.g. a file name. */
+  label?: string;
+  /** Show the copy button. */
+  copy?: boolean;
+  /** Render a shell prompt marker before each line (presentational only). */
+  prompt?: boolean;
+  /** Wrap long lines instead of scrolling (for prose-like snippets). */
+  wrap?: boolean;
+  class?: string;
+}
+
+const { code, language, label, copy = true, prompt = false, wrap = false, class: className } = Astro.props;
+const lang = language === 'text' ? 'plaintext' : language;
+---
+
+<div class:list={['codeblock card', className]} data-codeblock>
+  {
+    (label || copy) && (
+      <div class="flex items-center justify-between gap-3 border-b border-border px-3 py-1.5">
+        <span class="truncate font-mono text-xs text-muted">{label}</span>
+        {copy && (
+          <button
+            type="button"
+            class="copy-btn inline-flex min-h-8 shrink-0 items-center gap-1.5 rounded border border-border px-2.5 text-sm font-medium uppercase tracking-wider text-muted transition-colors hover:border-accent hover:text-fg"
+            data-copy={code}
+            data-label-copy={ui.copy}
+            data-label-copied={ui.copied}
+            data-announce={ui.copiedAnnouncement}
+            aria-label={ui.copyAria}
+          >
+            <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="9" y="9" width="12" height="12" rx="2" />
+              <path d="M5 15V5a2 2 0 0 1 2-2h10" />
+            </svg>
+            <span data-copy-text>{ui.copy}</span>
+          </button>
+        )}
+      </div>
+    )
+  }
+  <div class:list={['codeblock-body', { 'has-prompt': prompt }]}>
+    <Code code={code} lang={lang} theme={cuadrillaTheme} wrap={wrap} />
+  </div>
+  {copy && <span class="sr-only" aria-live="polite" data-copy-status></span>}
+</div>
+
+<style>
+  .codeblock {
+    min-width: 0;
+    max-width: 100%;
+    background-color: var(--color-surface);
+  }
+
+  .codeblock-body :global(pre) {
+    margin: 0;
+    padding: 0.875rem 1rem;
+    overflow-x: auto;
+    font-size: 0.875rem;
+    line-height: 1.7;
+    background-color: transparent !important;
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-border-strong) transparent;
+  }
+
+  .codeblock-body :global(pre:focus-visible) {
+    outline-offset: -2px;
+  }
+
+  .has-prompt :global(.line)::before {
+    content: '$ ';
+    color: var(--color-muted);
+    user-select: none;
+  }
+
+  .copy-btn.is-copied {
+    color: var(--color-ok);
+    border-color: var(--color-ok);
+  }
+</style>
+
+<script>
+  const RESET_MS = 2000;
+
+  async function writeClipboard(text: string): Promise<boolean> {
+    try {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  document.querySelectorAll<HTMLButtonElement>('[data-copy]').forEach((btn) => {
+    let timer: number | undefined;
+    btn.addEventListener('click', async () => {
+      const block = btn.closest('[data-codeblock]');
+      const label = btn.querySelector('[data-copy-text]');
+      const status = block?.querySelector('[data-copy-status]');
+      const ok = await writeClipboard(btn.dataset.copy ?? '');
+
+      if (!ok) {
+        // Fall back to selecting the code so the user can copy it manually.
+        const code = block?.querySelector('pre');
+        if (code) window.getSelection()?.selectAllChildren(code);
+        return;
+      }
+
+      btn.classList.add('is-copied');
+      if (label) label.textContent = btn.dataset.labelCopied ?? '';
+      if (status) status.textContent = btn.dataset.announce ?? '';
+      window.clearTimeout(timer);
+      timer = window.setTimeout(() => {
+        btn.classList.remove('is-copied');
+        if (label) label.textContent = btn.dataset.labelCopy ?? '';
+        if (status) status.textContent = '';
+      }, RESET_MS);
+    });
+  });
+</script>

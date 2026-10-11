@@ -1,0 +1,36 @@
+---
+import Section from '../ui/Section.astro';
+import SectionHeading from '../ui/SectionHeading.astro';
+import Card from '../ui/Card.astro';
+import { problemSection, problems } from '../../data/problems';
+---
+
+<Section id="problem" labelledby="problem-title">
+  <SectionHeading id="problem-title" eyebrow={problemSection.eyebrow} title={problemSection.title} intro={problemSection.intro} />
+
+  <ol class="grid gap-4" role="list">
+    {
+      problems.map((p, i) => (
+        <Card as="li" class="grid overflow-hidden md:grid-cols-[minmax(0,1fr)_auto_minmax(0,1.3fr)]" data-reveal style={`--reveal-delay: ${i * 80}ms`}>
+          <div class="p-5 sm:p-6">
+            <p class="mb-2 font-mono text-xs uppercase tracking-wider text-danger">
+              {String(i + 1).padStart(2, '0')} · {problemSection.failureLabel}
+            </p>
+            <h3 class="text-xl font-medium uppercase">{p.failure}</h3>
+            <p class="mt-2 text-base text-muted">{p.failureDetail}</p>
+          </div>
+          <div aria-hidden="true" class="flex items-center justify-center border-y border-border bg-surface-2 py-1.5 text-accent md:border-x md:border-y-0 md:px-3 md:py-0">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="rotate-90 md:rotate-0">
+              <path d="M5 12h14M13 6l6 6-6 6" />
+            </svg>
+          </div>
+          <div class="bg-surface-2/50 p-5 sm:p-6">
+            <p class="mb-2 font-mono text-xs uppercase tracking-wider text-accent">{problemSection.fixLabel}</p>
+            <h3 class="text-xl font-semibold uppercase text-accent">{p.fix}</h3>
+            <p class="mt-2 text-base text-fg/90">{p.fixDetail}</p>
+          </div>
+        </Card>
+      ))
+    }
+  </ol>
+</Section>

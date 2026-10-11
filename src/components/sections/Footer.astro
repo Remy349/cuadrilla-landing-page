@@ -1,0 +1,42 @@
+---
+import Wordmark from '../ui/Wordmark.astro';
+import { footer } from '../../data/cta';
+import { links, VERSION } from '../../data/site';
+
+const items = [
+  { label: footer.links.github, href: links.repo },
+  { label: footer.links.releases, href: links.releases },
+  { label: footer.links.changelog, href: links.changelog },
+  { label: footer.links.license, href: links.license },
+  { label: footer.links.readmeEs, href: links.readmeEs, lang: 'es' },
+];
+---
+
+<footer class="border-t border-border bg-surface">
+  <div class="mx-auto grid w-full max-w-(--container-page) gap-10 px-4 py-12 sm:px-6 md:grid-cols-[minmax(0,1fr)_auto] lg:px-8">
+    <div>
+      <Wordmark />
+      <p class="mt-3 max-w-md text-base text-muted">{footer.tagline}</p>
+      <p class="mt-1 text-sm text-muted">{footer.etymology}</p>
+    </div>
+    <nav aria-label="Footer">
+      <ul class="flex flex-wrap gap-x-6 gap-y-2 md:justify-end" role="list">
+        {
+          items.map((item) => (
+            <li>
+              <a href={item.href} lang={item.lang} class="text-base uppercase tracking-wider text-muted underline-offset-4 transition-colors hover:text-fg hover:underline">
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+    <div class="flex flex-col gap-2 border-t border-border pt-6 text-sm text-muted md:col-span-2 md:flex-row md:items-center md:justify-between">
+      <p>{footer.copyright} · {VERSION}</p>
+      <p>
+        <a href={links.opencode} class="text-fg underline-offset-4 hover:underline">{footer.builtFor}</a>. {footer.disclaimer}
+      </p>
+    </div>
+  </div>
+</footer>
